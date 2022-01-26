@@ -1,16 +1,17 @@
 package org.ivan_smirnov.orm.entity;
 
 import org.ivan_smirnov.orm.annotation.Column;
+import org.ivan_smirnov.orm.annotation.Id;
 import org.ivan_smirnov.orm.annotation.Table;
 
-@Table(name = "Person")
-public class Person {
-    @Column(name = "person_id")
-    private  int id;
+@Table
+public class Cat {
+    @Id
+    private int cat_id;
 
     @Column
-    private String name;
+    private String nickname;
 
     @Column
-    private int age;
+    private String color;
 }
