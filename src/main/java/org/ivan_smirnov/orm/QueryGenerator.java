@@ -9,5 +9,5 @@ public interface QueryGenerator {
 
     String insert(Object value) throws IllegalAccessException;
 
-    String delete(Object value);
+    String delete(Object value) throws IllegalAccessException;
 }

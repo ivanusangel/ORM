@@ -11,12 +11,7 @@ import static org.junit.Assert.assertEquals;
 
 public class QueryGeneratorTest {
 
-    QueryGenerator queryGenerator;
-
-    @Before
-    public void init() {
-        queryGenerator = new DefaultQueryGenerator();
-    }
+    QueryGenerator queryGenerator = new DefaultQueryGenerator();
 
     @Test
     public void findAllAnnotatedWithTableName(){
@@ -57,10 +52,14 @@ public class QueryGeneratorTest {
         String expectedQuery = "INSERT INTO Worker (person_id, name, age) VALUES ('2', 'John', '15');";
         QueryGenerator queryGenerator = new DefaultQueryGenerator();
         String actualQuery = queryGenerator.insert(new Person(2, "John", 15));
+        assertEquals(expectedQuery, actualQuery);
     }
 
     @Test
-    public void  delete(){
-
+    public void  delete() throws IllegalAccessException {
+        String expectedQuery = "DELETE FROM Worker WHERE person_id = 2;";
+        QueryGenerator queryGenerator = new DefaultQueryGenerator();
+        String actualQuery = queryGenerator.delete(new Person(2, "John", 15));
+        assertEquals(expectedQuery, actualQuery);
     }
 }

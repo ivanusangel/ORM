@@ -68,7 +68,7 @@ public class DefaultQueryGenerator implements QueryGenerator {
         StringJoiner valueJoiner = new StringJoiner("', '", "('", "')");
 
         StringBuilder result = new StringBuilder("INSERT INTO ");
-        result.append(tableName);
+        result.append(tableName).append(" ");
         for (Field declaredField : clazz.getDeclaredFields()) {
             Column columnAnnotation = declaredField.getAnnotation(Column.class);
             if (columnAnnotation != null) {
@@ -89,8 +89,33 @@ public class DefaultQueryGenerator implements QueryGenerator {
     }
 
     @Override
-    public String delete(Object value) {
-        return null;
+    public String delete(Object value) throws IllegalAccessException {
+        Class<?> clazz = value.getClass();
+        String tableName = getTableName(clazz);
+
+        StringBuilder result = new StringBuilder("DELETE FROM ");
+        result.append(tableName)
+                .append(" WHERE ");
+
+        for (Field declaredField : clazz.getDeclaredFields()) {
+            if (declaredField.getAnnotation(Id.class) != null) {
+                Column columnAnnotation = declaredField.getAnnotation(Column.class);
+                if (columnAnnotation == null) {
+                    throw new WrongAnnotationException("Annotation @Id without @Column");
+                }
+                String columnName = columnAnnotation.name();
+                String fieldName = !columnName.isEmpty()
+                        ? columnName
+                        : declaredField.getName();
+                declaredField.setAccessible(true);
+                result.append(fieldName)
+                        .append(" = ")
+                        .append(declaredField.get(value))
+                        .append(";");
+                break;
+            }
+        }
+        return result.toString();
     }
 
     private String getTableName(Class<?> clazz) {
